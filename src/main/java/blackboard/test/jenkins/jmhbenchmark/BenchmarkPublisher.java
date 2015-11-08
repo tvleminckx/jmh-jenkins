@@ -89,9 +89,14 @@ public class BenchmarkPublisher extends Recorder
     FilePath[] files = build.getWorkspace().list( "*.csv" );
     if ( files.length <= 0 )
     {
-      build.setResult( Result.FAILURE );
-      logger.println( "JMH Benchmark: benchmark file could not be found." );
-      return true;
+      // picking up result from the gradle jmh setup
+      files = build.getWorkspace().list( "build/reports/jmh/*.csv" );
+      if ( files.length <= 0 )
+      { 
+    	  build.setResult( Result.FAILURE );
+    	  logger.println( "JMH Benchmark: benchmark file could not be found." );
+    	  return true;
+      }
     }
 
     File localReports = copyBenchmarkOutputToMaster( build, files[ 0 ], BUILD_PROJECT_NAME );
